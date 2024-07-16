@@ -6,7 +6,7 @@ use axum::{
 use serde::Serialize;
 use std::net::SocketAddr;
 use tower_http::cors::{CorsLayer, Any};
-use reqwest::blocking::Client;
+use reqwest;
 use scraper::{Html, Selector};
 
 #[derive(Serialize)]
@@ -15,17 +15,19 @@ struct MarketStatus {
 }
 
 async fn market_open_status() -> Json<MarketStatus> {
-    let market_open = check_market_open();
+    let market_open = check_market_open().await;
     Json(MarketStatus { market_open })
 }
 
-fn check_market_open() -> bool {
+async fn check_market_open() -> bool {
     let url = "https://finance.yahoo.com/quote/%5EGSPC/";
-    let client = Client::new();
+    let client = reqwest::Client::new();
     let res = client.get(url)
         .send()
+        .await
         .expect("Failed to fetch data")
         .text()
+        .await
         .expect("Failed to read response text");
 
     let document = Html::parse_document(&res);
