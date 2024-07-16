@@ -6,6 +6,8 @@ use axum::{
 use serde::Serialize;
 use std::net::SocketAddr;
 use tower_http::cors::{CorsLayer, Any};
+use reqwest::blocking::Client;
+use scraper::{Html, Selector};
 
 #[derive(Serialize)]
 struct MarketStatus {
@@ -13,27 +15,46 @@ struct MarketStatus {
 }
 
 async fn market_open_status() -> Json<MarketStatus> {
-    // 这里你可以添加逻辑来确定市场是否开盘
-    let status = MarketStatus { market_open: true };
-    Json(status)
+    let market_open = check_market_open();
+    Json(MarketStatus { market_open })
+}
+
+fn check_market_open() -> bool {
+    let url = "https://finance.yahoo.com/quote/%5EGSPC/";
+    let client = Client::new();
+    let res = client.get(url)
+        .send()
+        .expect("Failed to fetch data")
+        .text()
+        .expect("Failed to read response text");
+
+    let document = Html::parse_document(&res);
+    let selector = Selector::parse("div[slot='marketTimeNotice'] span").unwrap();
+    
+    if let Some(element) = document.select(&selector).next() {
+        let market_status = element.inner_html();
+        return market_status.contains("Market Open");
+    }
+
+    false
 }
 
 #[tokio::main]
 async fn main() {
-    // 构建我们的应用程序并添加路由
+    // Build our application with routes
     let app = Router::new()
         .route("/api/market/open", get(market_open_status))
         .layer(
             CorsLayer::new()
-                .allow_origin(Any) // 允许任何来源的请求，你可以根据需要调整
+                .allow_origin(Any) // Allow requests from any origin; adjust as needed
                 .allow_methods(Any),
         );
 
-    // 设置监听地址
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3001));  // 改为3001端口
+    // Set the listening address
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3001));  // Change to port 3001
     println!("Listening on {}", addr);
 
-    // 启动服务器
+    // Run the server
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
