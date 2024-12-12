@@ -64,29 +64,8 @@ checksum = "216c6846a292bdd93c2b93c1baab58c32ff50e2ab5e8d50db333ab518535dd8b"
 dependencies = [
  "bitflags 1.3.2",
  "chrono",
- "hex",
- "indexmap 1.9.3",
- "lazy_static",
- "lexical-core",
- "multiversion",
- "num",
- "regex",
- "serde",
- "serde_derive",
- "serde_json",
-]
-
-[[package]]
-name = "arrow"
-version = "14.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0612b6a634de6c3f5e63fdaa6932f7bc598f92de0462ac6e69b0aebd77e093aa"
-dependencies = [
- "bitflags 1.3.2",
- "chrono",
  "csv",
  "flatbuffers",
- "half",
  "hex",
  "indexmap 1.9.3",
  "lazy_static",
@@ -420,9 +399,9 @@ checksum = "9fc0510504f03c51ada170672ac806f1f105a88aa97a5281117e1ddc3368e51a"
 
 [[package]]
 name = "flatbuffers"
-version = "2.1.2"
+version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "86b428b715fdbdd1c364b84573b5fdc0f84f8e423661b9f398735278bc7f2b6a"
+checksum = "ef4c5738bcd7fad10315029c50026f83c9da5e4a21f8ed66826f43e0e2bde5f6"
 dependencies = [
  "bitflags 1.3.2",
  "smallvec",
@@ -606,12 +585,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "half"
-version = "1.8.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1b43ede17f21864e81be2fa654110bf1e793774238d86ef8555c37e6519c0403"
-
-[[package]]
 name = "hashbrown"
 version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -789,7 +762,7 @@ checksum = "48dc51180a9b377fd75814d0cc02199c20f8e99433d6762f650d39cdbbd3b56f"
 name = "investutil-back"
 version = "0.1.0"
 dependencies = [
- "arrow 14.0.0",
+ "arrow",
  "axum",
  "parquet",
  "reqwest",
@@ -1248,7 +1221,7 @@ version = "6.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d263b9b59ba260518de9e57bd65931c3f765fea0fabacfe84f40d6fde38e841a"
 dependencies = [
- "arrow 6.5.0",
+ "arrow",
  "base64 0.13.1",
  "brotli",
  "byteorder",
