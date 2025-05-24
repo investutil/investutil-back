@@ -1,6 +1,10 @@
 # InvestUtil Backend
 
 A modern investment utility backend service built with Rust and Axum, following Domain-Driven Design (DDD) principles.
+See more infos about the project in this repo:
+https://github.com/investutil/investutil-principal
+frontend:
+https://github.com/investutil/investutil-front
 
 ## Architecture
 
