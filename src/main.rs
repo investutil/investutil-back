@@ -1,11 +1,12 @@
 use std::net::SocketAddr;
+use std::sync::Arc;
 use axum::{
     routing::get,
     Router,
     Json,
     http::{HeaderValue, Method},
 };
-use tower_http::cors::{CorsLayer, Any};
+use tower_http::cors::CorsLayer;
 use dotenvy::dotenv;
 use std::env;
 use reqwest;
@@ -14,13 +15,9 @@ use serde::Serialize;
 use tokio::net::TcpListener;
 use axum::http::header;
 
-mod models;
-mod services;
-mod handlers;
-mod routes;
-
-use crate::routes::auth::auth_routes;
-use crate::services::auth::AuthService;
+use investutil_back::application::services::auth_service::AuthService;
+use investutil_back::infrastructure::persistence::postgres::user_repository::PgUserRepository;
+use investutil_back::interfaces::api::auth::auth_routes;
 
 #[derive(Serialize)]
 struct MarketStatus {
@@ -71,8 +68,11 @@ async fn main() {
     let jwt_secret = env::var("JWT_SECRET")
         .expect("JWT_SECRET must be set");
 
-    // Create auth service
-    let auth_service = AuthService::new(pool.clone(), jwt_secret);
+    // Create repositories
+    let user_repository = Arc::new(PgUserRepository::new(pool));
+
+    // Create services
+    let auth_service = Arc::new(AuthService::new(user_repository, jwt_secret));
 
     // CORS configuration
     let cors = CorsLayer::new()
@@ -88,7 +88,7 @@ async fn main() {
     // Build our application with routes
     let app = Router::new()
         .route("/api/market/open", get(market_open_status))
-        .nest("/auth", auth_routes(auth_service))
+        .nest("/auth", auth_routes(auth_service.clone()))
         .layer(cors);
 
     // Get host and port from environment
