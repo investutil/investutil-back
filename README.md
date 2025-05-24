@@ -58,7 +58,6 @@ Handles external communication and API endpoints.
 
 - Rust (latest stable)
 - PostgreSQL
-- Docker (optional)
 
 ### Setup
 
@@ -160,6 +159,17 @@ cargo test
 3. Commit your changes
 4. Push to the branch
 5. Create a Pull Request
+
+## Environment Variables
+
+- `DATABASE_URL`: PostgreSQL connection string
+- `JWT_SECRET`: Secret key for JWT token generation
+- `HOST`: Server host (default: 127.0.0.1)
+- `PORT`: Server port (default: 8080)
+
+## Deployment
+
+For deployment instructions, please refer to the [InvestUtil Infrastructure Repository](https://github.com/investutil/investutil-infra).
 
 ## License
 

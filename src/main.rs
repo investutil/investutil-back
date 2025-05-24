@@ -17,7 +17,10 @@ use axum::http::header;
 
 use investutil_back::application::services::auth_service::AuthService;
 use investutil_back::infrastructure::persistence::postgres::user_repository::PgUserRepository;
-use investutil_back::interfaces::api::auth::auth_routes;
+use investutil_back::interfaces::api::{
+    auth::auth_routes,
+    health::health_routes,
+};
 
 #[derive(Serialize)]
 struct MarketStatus {
@@ -89,6 +92,7 @@ async fn main() {
     let app = Router::new()
         .route("/api/market/open", get(market_open_status))
         .nest("/auth", auth_routes(auth_service.clone()))
+        .merge(health_routes())
         .layer(cors);
 
     // Get host and port from environment
